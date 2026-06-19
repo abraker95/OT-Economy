@@ -6,7 +6,8 @@ import time
 
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from config import (
-    CLIENT_ID, CLIENT_SECRET, REDIRECT_URI
+    CLIENT_ID, CLIENT_SECRET, REDIRECT_URI,
+    TOKEN_CACHE_FILE, OSU_TOKEN_URL, OSU_FORUM_URL, FORUM_ID
 )
 
 
@@ -20,10 +21,6 @@ Since ossapi does not support fetching topics by forumID I had to make
 a manual implementation
 """
 
-FORUM_ID = 52
-TOKEN_CACHE_FILE = "osu_token_cache.json"
-OSU_TOKEN_URL = "https://osu.ppy.sh/oauth/token"
-OSU_FORUM_URL = "https://osu.ppy.sh/api/v2/forums/{forum_id}"
 # === TOKEN HANDLING ===
 def get_cached_token():
     """Load cached token if valid"""
@@ -48,11 +45,11 @@ def refresh_access_token():
         raise RuntimeError("Missing refresh_token in cache — re-run getauth.py")
 
     data = {
-        "client_id": client_id,
-        "client_secret": client_secret,
-        "grant_type": "refresh_token",
-        "refresh_token": refresh_token,
-        "redirect_uri": "http://localhost:8000"
+        "client_id"     : CLIENT_ID,
+        "client_secret" : CLIENT_SECRET,
+        "grant_type"    : "refresh_token",
+        "refresh_token" : refresh_token,
+        "redirect_uri"  : "http://localhost:8000"
     }
 
     resp = requests.post(OSU_TOKEN_URL, data=data)

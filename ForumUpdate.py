@@ -2,19 +2,21 @@ from ossapi import Ossapi, Scope
 import json
 import string
 import time
-from pathlib import Path
+import pathlib
+
 
 # === osu! API Setup ===
 from config import (
-    CLIENT_ID, CLIENT_SECRET, REDIRECT_URI
+    CLIENT_ID, CLIENT_SECRET, REDIRECT_URI,
+    DB_PATH, COMMAND_HISTORY_PATH, BOT_POST_ID
 )
-scopes = [Scope.PUBLIC, Scope.FORUM_WRITE]
+scopes = [ Scope.PUBLIC, Scope.FORUM_WRITE ]
 api    = Ossapi(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, scopes = scopes)
 
 # === Local DB ===
-DB_PATH = Path("database.json")
-COMMAND_HISTORY_PATH = Path("command_history.json")
-POST_ID = 10010331   # post you want to update
+DB_PATH              = pathlib.Path(DB_PATH)
+COMMAND_HISTORY_PATH = pathlib.Path(COMMAND_HISTORY_PATH)
+
 
 # === Build Leaderboard ===
 def update_leaderboard(db):
@@ -197,5 +199,5 @@ def create_updated_post():
 # === Upload the post ===
 def update_post():
     text = create_updated_post()
-    api.forum_edit_post(post_id=POST_ID, body=text)
+    api.forum_edit_post(post_id = BOT_POST_ID, body = text)
     print("✅ Forum post updated successfully.")

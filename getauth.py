@@ -7,7 +7,8 @@ import json
 import time
 
 from config import (
-    CLIENT_ID, CLIENT_SECRET, REDIRECT_URI
+    CLIENT_ID, CLIENT_SECRET, REDIRECT_URI,
+    OSU_TOKEN_URL, TOKEN_CACHE_FILE
 )
 
 # === CONFIG ===
@@ -19,8 +20,6 @@ AUTH_URL = (
     f"&response_type=code"
     f"&scope=public+forum.write"
 )
-TOKEN_URL = "https://osu.ppy.sh/oauth/token"
-TOKEN_FILE = "osu_token_cache.json"
 
 # === GLOBAL ===
 auth_code = None
@@ -76,7 +75,7 @@ data = {
 }
 
 print("Exchanging code for access token...")
-resp = requests.post(TOKEN_URL, data=data)
+resp = requests.post(OSU_TOKEN_URL, data = data)
 if resp.status_code != 200:
     print("Token exchange failed:", resp.status_code, resp.text)
     exit(1)
@@ -85,8 +84,7 @@ token_data = resp.json()
 token_data["expires_at"] = time.time() + token_data["expires_in"] - 30
 
 # === SAVE TOKENS LOCALLY ===
-with open(TOKEN_FILE, "w", encoding="utf-8") as f:
-    json.dump(token_data, f, indent=4)
+with open(TOKEN_CACHE_FILE, "w", encoding="utf-8") as f:
 
 print("Token saved to osu_token_cache.json!")
 print(json.dumps(token_data, indent=2))

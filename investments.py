@@ -1,34 +1,15 @@
 import json
 import time
-from pathlib import Path
+import pathlib
+
 from API import api
+from config import (
+    DB_PATH, INVESTMENTS_PATH,
+    TIERS, TIER_PCT, TIER_BASE_HOURS
+)
 
-INVESTMENTS_PATH = Path("investments.json")
-DB_PATH = Path("database.json")
-
-# === CONSTANTS ===
-TIERS = [10, 20, 30, 40, 50]
-
-TIER_PCT = {
-    10: 0.03,
-    20: 0.07,
-    30: 0.12,
-    40: 0.25,
-    50: 0.50,
-}
-
-# Full-reward window in hours per tier.
-# Chosen time_limit ≤ base        -> ×1.0 reward
-# base < time_limit ≤ 2×base     -> ×0.5 reward
-# 2×base < time_limit ≤ 3×base   -> ×0.25 reward
-# time_limit > 3×base             -> invalid (command fails)
-TIER_BASE_HOURS = {
-    10: 12,
-    20: 24,
-    30: 48,
-    40: 72,
-    50: 168,
-}
+INVESTMENTS_PATH = pathlib.Path(INVESTMENTS_PATH)
+DB_PATH          = pathlib.Path(DB_PATH)
 
 
 # === DB HELPERS ===

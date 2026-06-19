@@ -2,8 +2,11 @@ import json
 import time
 from pathlib import Path
 
-DB_PATH = Path("database.json")
-BLACKLISTED_ITEMS = []  # example blacklist
+from config import (
+    DB_PATH
+)
+
+DB_PATH = Path(DB_PATH)
 
 
 def load_db():

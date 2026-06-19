@@ -2,18 +2,25 @@ import json
 import random
 import time
 import math
-from pathlib import Path
+import pathlib
 
-DB_PATH = Path("database.json")
-INTRO_PATH = Path("post_intro.txt")
-STATE_PATH = Path("bot_state.json")
-TICKS_PER_WEEK = 40320
-TAX_RATE = 0.03
-TAX_THRESHOLD = 10000
+from commands import (
+    check_post_for_commands,
+    process_command_queue,
+    command_queue
+)
+from API import check_new_posts   # your existing function
+from ForumUpdate import update_post      # your update function
+from investments import check_investments
 
+from config import (
+    DB_PATH, INTRO_PATH, STATE_PATH,
+    TICK_INTERVAL, TAX_RATE, TAX_TICK_INTERVAL_PER_WEEK, TAX_THRESHOLD
+)
 
-
-
+DB_PATH    = pathlib.Path(DB_PATH)
+INTRO_PATH = pathlib.Path(INTRO_PATH)
+STATE_PATH = pathlib.Path(STATE_PATH)
 
 
 def load_db():
@@ -42,7 +49,7 @@ def apply_wealth_tax_tick_based(current_tick):
     Applies a 3% wealth tax every 40,320 ticks (~once per week)
     to all users with >10,000 OT Bucks.
     """
-    if current_tick % TICKS_PER_WEEK != 0:
+    if current_tick % TAX_TICK_INTERVAL_PER_WEEK != 0:
         return  # Not a tax tick yet
 
     db = load_db()
@@ -160,24 +167,6 @@ def maybe_reward_user(user_id):
         )
         return None
 
-
-
-
-
-import time
-from commands import (
-    check_post_for_commands,
-    process_command_queue,
-    command_queue
-)
-
-
-
-from API import check_new_posts   # your existing function
-from ForumUpdate import update_post      # your update function
-from investments import check_investments
-
-TICK_INTERVAL = 15  # seconds between checks
 
 def tick_loop():
     state = load_state()

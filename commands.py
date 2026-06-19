@@ -2,9 +2,14 @@ import re
 import json
 import time
 import copy
-from pathlib import Path
+import pathlib
+
 import API
-from API import get_username
+from config import (
+    DB_PATH, COMMAND_HISTORY_PATH,
+    MAX_COMMAND_HISTORY,
+    RARITY_ORDER, RARITY_TOTAL_COST, BLACKLISTED_ITEMS
+)
 from investments import (
     resolve_tier,
     get_reward_multiplier,
@@ -26,26 +31,9 @@ Commands supported:
 """
 
 # === CONFIG ===
-DB_PATH = Path("database.json")
-COMMAND_HISTORY_PATH = Path("command_history.json")
-MAX_COMMAND_HISTORY = 20
-BLACKLISTED_ITEMS = ["admin_sword", "banhammer"]
-RARITY_ORDER = [
-    ("common", 100),
-    ("rare", 350),
-    ("exotic", 1500),
-    ("legendary", 10000),
-    ("sacred", None),  # no upgrades beyond sacred
-]
+DB_PATH              = pathlib.Path(DB_PATH)
+COMMAND_HISTORY_PATH = pathlib.Path(COMMAND_HISTORY_PATH)
 
-# Total OT Bucks invested per item unit at each rarity (creation + all upgrades to reach it)
-RARITY_TOTAL_COST = {
-    "common":    1,        # 1 (creation)
-    "rare":      101,      # 1 + 100
-    "exotic":    451,      # 1 + 100 + 350
-    "legendary": 1951,     # 1 + 100 + 350 + 1500
-    "sacred":    11951,    # 1 + 100 + 350 + 1500 + 10000
-}
 command_queue = []
 
 
